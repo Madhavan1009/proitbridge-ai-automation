@@ -1,0 +1,46 @@
+# ─── Secrets & env ─────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.env.local
+*.pem
+
+# ─── Backend (Python) ─────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.coverage
+
+# Generated activity logs / rules / summaries
+backend/data/activities.json
+backend/data/rules.json
+backend/data/summaries.json
+
+# ─── Frontend (Node / Next.js) ────────────────────────
+node_modules/
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+next-env.d.ts
+.vercel
+
+# ─── Editor / OS ──────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# ─── Misc ─────────────────────────────────────────────
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
