@@ -1,0 +1,41 @@
+# ProITBridge Render Blueprint
+#
+# Lets anyone deploy the backend with a single click using
+#   https://render.com/deploy?repo=https://github.com/Madhavan1009/proitbridge-ai-automation
+#
+# After deploying, set these env vars from the Render dashboard
+# (they're marked sync: false below so they aren't pulled from blueprint):
+#   GROQ_API_KEY            — from https://console.groq.com
+#   ZAPIER_WEBHOOK_URL      — from your Zapier Catch Hook
+#   CRON_SECRET             — random string (used by the GitHub Actions cron)
+#   GITHUB_WEBHOOK_SECRET   — random string (used by /api/github webhook)
+#   FRONTEND_URL            — your Vercel URL (e.g. https://*.vercel.app)
+
+services:
+  - type: web
+    name: proitbridge-backend
+    runtime: python
+    plan: free
+    region: singapore           # closest to India; change if you prefer
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    autoDeploy: true            # redeploy on every push to main
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: ZAPIER_WEBHOOK_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: CRON_SECRET
+        sync: false
+      - key: GITHUB_WEBHOOK_SECRET
+        sync: false
+      - key: APP_ENV
+        value: production
+      - key: PYTHON_VERSION
+        value: 3.11.9

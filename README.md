@@ -2,6 +2,15 @@
 
 > *Strive For Better Future.*
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FMadhavan1009%2Fproitbridge-ai-automation&root-directory=frontend&env=NEXT_PUBLIC_API_BASE_URL&envDescription=URL%20of%20your%20deployed%20FastAPI%20backend%20on%20Render&project-name=proitbridge-ai-automation&repository-name=proitbridge-ai-automation)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https%3A%2F%2Fgithub.com%2FMadhavan1009%2Fproitbridge-ai-automation)
+
+**Live demo:** <https://proitbridge-ai-automation.vercel.app>
+**Repo:** <https://github.com/Madhavan1009/proitbridge-ai-automation>
+**Full setup guide:** [`DEPLOYMENT.md`](./DEPLOYMENT.md)
+
+---
+
 AI-powered engineering workflow automation platform. Ingests GitHub events,
 deployment alerts, and incident reports → uses **Groq AI** to score
 operational risk → orchestrates **Zapier** to fan out to Gmail, Trello,
@@ -146,23 +155,23 @@ dashboard to fire test events through the pipeline.
 
 ## Deployment
 
-### Backend → Render (free tier)
+### Backend → Render (free tier, one-click)
 
-1. Push the repo to GitHub.
-2. In Render → **New** → **Web Service** → connect the repo.
-3. Set **Root Directory** to `backend`.
-4. Render detects `backend/render.yaml` and provisions a free Python service.
-5. In the Render dashboard, set the env vars:
-   - `GROQ_API_KEY`
-   - `ZAPIER_WEBHOOK_URL`
-   - `FRONTEND_URL` (your Vercel URL once deployed, e.g. `https://proitbridge.vercel.app`)
-6. Render starts the service with:
-   ```
-   uvicorn main:app --host 0.0.0.0 --port $PORT
-   ```
+Click the **Deploy to Render** button at the top of this README, OR:
+
+1. In Render → **New** → **Blueprint** → connect the repo.
+2. Render auto-detects [`render.yaml`](./render.yaml) at the root and
+   provisions a `proitbridge-backend` service from the `backend/` directory.
+3. After provisioning, set these env vars in the Render dashboard:
+   - `GROQ_API_KEY` — from <https://console.groq.com>
+   - `ZAPIER_WEBHOOK_URL` — from your Zapier Catch Hook
+   - `CRON_SECRET` — any random string
+   - `GITHUB_WEBHOOK_SECRET` — any random string
+   - `FRONTEND_URL` — your Vercel URL once deployed
+4. Render restarts. Service is live at `https://proitbridge-backend.onrender.com`.
 
 > Free Render instances sleep after ~15 min of inactivity. The first
-> request after sleep takes a few seconds to wake up — normal.
+> request after sleep takes ~10 s to wake up — normal.
 
 ### Frontend → Vercel (free tier)
 
