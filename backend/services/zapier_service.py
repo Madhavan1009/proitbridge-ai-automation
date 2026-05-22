@@ -181,17 +181,26 @@ async def trigger_zapier_summary(summary: DailySummary) -> tuple[bool, str]:
         "confidence": 0.95,
     }
 
-    if not settings.has_zapier:
+    target_url = settings.summary_webhook_url
+    using_dedicated = bool(settings.ZAPIER_SUMMARY_WEBHOOK_URL)
+
+    if not target_url:
         logger.info(
-            "Zapier webhook not configured — daily summary payload logged only."
+            "No Zapier webhook configured — daily summary payload logged only."
         )
         return True, "Zapier webhook not configured (payload logged locally)"
 
+    label = "dedicated summary Zap" if using_dedicated else "main Zap (shared)"
+    logger.info("Posting daily summary to %s: %s", label, target_url)
+
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.post(settings.ZAPIER_WEBHOOK_URL, json=payload)
+            response = await client.post(target_url, json=payload)
             response.raise_for_status()
-            return True, f"Zapier accepted summary (HTTP {response.status_code})"
+            return True, (
+                f"Zapier accepted summary at {label} "
+                f"(HTTP {response.status_code})"
+            )
     except httpx.HTTPError as exc:
         logger.warning("Zapier summary call failed: %s", exc)
         return False, f"Zapier summary call failed: {exc}"
