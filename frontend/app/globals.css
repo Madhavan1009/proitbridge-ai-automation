@@ -26,7 +26,12 @@ body {
 }
 
 ::selection {
-  background-color: rgba(34, 211, 238, 0.35);
+  background-color: rgba(15, 23, 42, 0.85);
+  color: #f8fafc;
+}
+
+::-moz-selection {
+  background-color: rgba(15, 23, 42, 0.85);
   color: #f8fafc;
 }
 
@@ -131,6 +136,22 @@ body {
            px-3.5 py-2.5 text-sm text-slate-100 placeholder:text-slate-500
            focus:outline-none focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20
            transition-all;
+  }
+
+  /* Make native <select> dropdown options readable.
+     Browsers paint the open menu using the OS color picker; without these
+     overrides the white text-slate-100 from .input-base becomes invisible
+     on the system-default white popup background. */
+  select.input-base option,
+  select.input-base optgroup {
+    background-color: #0b1d3f;
+    color: #f8fafc;
+    padding: 6px 10px;
+  }
+
+  select.input-base option:checked {
+    background-color: #045cb4;
+    color: #ffffff;
   }
 
   .scrollbar-thin::-webkit-scrollbar {

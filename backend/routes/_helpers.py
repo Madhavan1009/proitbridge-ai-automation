@@ -31,6 +31,10 @@ async def process_event(
         context=context,
     )
 
+    # Load user-defined automation rules — process_event applies them
+    # when deciding whether to fan out to Zapier.
+    rules = storage.load_rules(settings.RULES_FILE)
+
     activity_id = f"act-{uuid.uuid4().hex[:10]}"
     triggered, message = await trigger_zapier(
         activity_id=activity_id,
@@ -39,6 +43,7 @@ async def process_event(
         actor=actor,
         repository=repository,
         analysis=analysis,
+        rules=rules,
     )
 
     activity = ActivityLog(
