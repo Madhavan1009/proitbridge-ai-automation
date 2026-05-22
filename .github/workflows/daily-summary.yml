@@ -1,0 +1,38 @@
+name: Daily Engineering Summary
+
+# Fires once a day and pings the deployed backend's cron endpoint so Groq
+# generates a fresh standup roll-up and Zapier fans out the digest.
+#
+# Times use UTC. 03:30 UTC ≈ 09:00 IST (Bengaluru morning standup).
+# Adjust the cron line below if you're in a different region.
+#
+# Required GitHub Actions secrets:
+#   BACKEND_URL    Full base URL of the deployed FastAPI service
+#                  e.g. https://proitbridge.onrender.com
+#   CRON_SECRET    Same value as the CRON_SECRET env var on Render
+#                  (leave blank if you haven't set one on the server)
+
+on:
+  schedule:
+    - cron: "30 3 * * *"        # 09:00 IST / 03:30 UTC, every day
+  workflow_dispatch:             # also run manually from the Actions tab
+
+jobs:
+  fire:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger daily summary
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error \
+            -X POST "${BACKEND_URL%/}/api/cron/daily-summary" \
+            -H "Content-Type: application/json" \
+            -H "X-Cron-Secret: ${CRON_SECRET:-}" \
+            -d '{"window_hours": 24, "trigger_zapier": true}' \
+            -o response.json \
+            -w "HTTP %{http_code}\n"
+          echo "--- Response ---"
+          cat response.json | head -c 2000
+        env:
+          BACKEND_URL: ${{ secrets.BACKEND_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
